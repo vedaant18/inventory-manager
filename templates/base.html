@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Burger Restaurant Manager</title>
+	<link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+	<header class="container">
+		<h1>🍔 Burger Restaurant Manager</h1>
+		<p class="subtitle">Manage your inventory & take orders</p>
+		
+		<!-- Navigation -->
+		<nav class="main-nav">
+			<a href="{{ url_for('inventory') }}" class="nav-link {% if request.endpoint == 'inventory' %}active{% endif %}">
+				📦 View Inventory
+			</a>
+			<a href="{{ url_for('add_stock_page') }}" class="nav-link {% if request.endpoint == 'add_stock_page' %}active{% endif %}">
+				📥 Add Stock
+			</a>
+			<a href="{{ url_for('orders_page') }}" class="nav-link {% if request.endpoint == 'orders_page' %}active{% endif %}">
+				🛒 Take Orders
+			</a>
+		</nav>
+	</header>
+
+	<main class="container">
+		{% with messages = get_flashed_messages(with_categories=true) %}
+			{% if messages %}
+				<ul class="flashes">
+					{% for category, message in messages %}
+						<li class="flash {{ category }}">{{ message }}</li>
+					{% endfor %}
+				</ul>
+			{% endif %}
+		{% endwith %}
+
+		{% block content %}{% endblock %}
+	</main>
+
+	<footer class="container footer">
+		<small>Burger Restaurant Inventory Manager • Powered by Flask</small>
+	</footer>
+</body>
+</html>

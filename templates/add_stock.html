@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block content %}
+
+<section class="card">
+	<h2>📥 Add Stock to Inventory</h2>
+	<p class="subtitle-text">Select an item and enter the quantity to add to your inventory.</p>
+	
+	<form method="post" action="{{ url_for('add_stock') }}" class="simple-form">
+		<div class="form-row-simple">
+			<div class="form-group">
+				<label for="item_name">Select Item *</label>
+				<select name="item_name" id="item_name" required>
+					<option value="">-- Choose an item --</option>
+					{% set current_category = "" %}
+					{% for item in all_items %}
+						{% if item.category != current_category %}
+							{% if current_category != "" %}</optgroup>{% endif %}
+							<optgroup label="{{ item.category }}">
+							{% set current_category = item.category %}
+						{% endif %}
+						<option value="{{ item.name }}">{{ item.name }} (Current: {{ item.quantity|int }} {{ item.unit }})</option>
+					{% endfor %}
+					{% if current_category != "" %}</optgroup>{% endif %}
+				</select>
+			</div>
+			
+			<div class="form-group">
+				<label for="quantity">Quantity to Add *</label>
+				<input type="number" name="quantity" id="quantity" step="1" min="1" value="1" required />
+				<small>Enter positive number only</small>
+			</div>
+			
+			<div class="form-group">
+				<button type="submit" class="btn-primary">➕ Add to Stock</button>
+			</div>
+		</div>
+	</form>
+</section>
+
+<!-- Quick View of Current Stock -->
+<section class="card">
+	<h2>📊 Quick Stock Overview</h2>
+	<div class="stock-grid">
+		{% for item in all_items %}
+		<div class="stock-item {% if item.is_low_stock %}low-stock{% endif %}">
+			<div class="stock-item-header">
+				<span class="stock-name">{{ item.name }}</span>
+				{% if item.is_low_stock %}
+				<span class="stock-alert">⚠️</span>
+				{% endif %}
+			</div>
+			<div class="stock-quantity">{{ item.quantity|int }} {{ item.unit }}</div>
+			<div class="stock-category">{{ item.category }}</div>
+		</div>
+		{% endfor %}
+	</div>
+</section>
+
+{% endblock %}
+

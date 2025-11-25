@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="orders-container">
+	
+	<!-- Custom Burger Order -->
+	<section class="card order-card">
+		<h2>🍔 Order Custom Burger</h2>
+		<form method="post" action="{{ url_for('order_burger') }}" class="order-form">
+			<div class="order-section">
+				<h3>Standard Burger Includes:</h3>
+				<p class="info-text">Buns, Patty, Tomato Sauce, Lettuce, Tomatoes, Onion</p>
+			</div>
+			
+			<div class="order-section">
+				<h3>🥬 Opt-Out Options (Uncheck to remove):</h3>
+				<div class="checkbox-grid">
+					{% for item in optional_items %}
+					<label class="checkbox-label">
+						<input type="checkbox" name="include_{{ item.lower().replace(' ', '_') }}" checked />
+						<span>{{ item }}</span>
+					</label>
+					{% endfor %}
+				</div>
+			</div>
+			
+			<div class="order-section">
+				<h3>➕ Add Extra Items:</h3>
+				<div class="extra-items-grid">
+					{% for item, _ in extra_items.items() %}
+					<div class="extra-item">
+						<label for="extra_{{ item.lower() }}">Extra {{ item }}:</label>
+						<input type="number" name="extra_{{ item.lower() }}" id="extra_{{ item.lower() }}" min="0" max="5" value="0" />
+					</div>
+					{% endfor %}
+				</div>
+			</div>
+			
+			<button type="submit" class="btn-order">🛒 Place Burger Order</button>
+		</form>
+	</section>
+	
+	<!-- Fries Order -->
+	<section class="card order-card">
+		<h2>🍟 Order Fries</h2>
+		<p class="info-text">1 set = 200g | 5 sets = 1 kg</p>
+		<form method="post" action="{{ url_for('order_fries') }}" class="order-form">
+			<div class="form-group">
+				<label for="fries_quantity">Number of Sets (200g each):</label>
+				<input type="number" name="quantity" id="fries_quantity" min="1" value="1" required />
+				<small>Example: Order 5 sets to use 1 kg from inventory</small>
+			</div>
+			<button type="submit" class="btn-order">🛒 Order Fries</button>
+		</form>
+	</section>
+	
+	<!-- Drink Order -->
+	<section class="card order-card">
+		<h2>🥤 Order Soft Drink</h2>
+		<form method="post" action="{{ url_for('order_drink') }}" class="order-form">
+			<div class="form-group">
+				<label for="drink_name">Select Drink:</label>
+				<select name="drink_name" id="drink_name" required>
+					<option value="">-- Choose a drink --</option>
+					{% for drink in drinks %}
+					<option value="{{ drink.name }}">{{ drink.name }} (Stock: {{ drink.quantity|int }})</option>
+					{% endfor %}
+				</select>
+			</div>
+			<div class="form-group">
+				<label for="drink_quantity">Quantity (bottles):</label>
+				<input type="number" name="quantity" id="drink_quantity" min="1" value="1" required />
+			</div>
+			<button type="submit" class="btn-order">🛒 Order Drink</button>
+		</form>
+	</section>
+	
+	<!-- Meal Orders -->
+	<section class="card order-card meal-card">
+		<h2>🍽️ Order Complete Meal</h2>
+		<form method="post" action="{{ url_for('order_meal') }}" class="order-form">
+			<div class="form-group">
+				<label for="meal_type">Select Meal:</label>
+				<select name="meal_type" id="meal_type" required>
+					<option value="">-- Choose a meal --</option>
+					{% for meal_name, meal_details in meals.items() %}
+					<option value="{{ meal_name }}">
+						{{ meal_name }} ({{ meal_details.burger }} Burger(s), {{ meal_details.fries_sets }} Set(s) Fries, {{ meal_details.drink }} Drink(s))
+					</option>
+					{% endfor %}
+				</select>
+			</div>
+			
+			<div class="form-group">
+				<label for="meal_quantity">Number of Meals:</label>
+				<input type="number" name="meal_quantity" id="meal_quantity" min="1" value="1" required />
+				<small>How many of this meal to order</small>
+			</div>
+			
+			<div class="form-group">
+				<label for="meal_drink">Choose Drink for Meal:</label>
+				<select name="meal_drink" id="meal_drink" required>
+					<option value="">-- Choose a drink --</option>
+					{% for drink in drinks %}
+					<option value="{{ drink.name }}">{{ drink.name }} (Stock: {{ drink.quantity|int }})</option>
+					{% endfor %}
+				</select>
+			</div>
+			
+			<button type="submit" class="btn-order btn-meal">🍽️ Place Meal Order</button>
+		</form>
+		
+		<div class="meal-info">
+			<h4>Meal Options:</h4>
+			<p><em>Note: 1 set of fries = 200g | 5 sets = 1 kg</em></p>
+			<ul>
+				<li><strong>Basic Meal:</strong> 1 Burger + 1 Set Fries (200g) + 1 Drink</li>
+				<li><strong>Deluxe Meal:</strong> 1 Burger + 2 Sets Fries (400g) + 2 Drinks</li>
+				<li><strong>Family Meal:</strong> 4 Burgers + 4 Sets Fries (800g) + 4 Drinks</li>
+			</ul>
+		</div>
+	</section>
+	
+</div>
+
+{% endblock %}
+
